@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>New Web Project</title>
+		<style>
+			body {
+				background-color: #000000;
+				font-family: monospace;
+				color: #eeeeee;
+				font-weight: bold;
+				font-size: 1.1em;
+			}
+
+			#inputline {
+				color: #ffffff;
+				background-color: #000000;
+				border-style: none;
+				font-family: monospace;
+				color: #eeeeee;
+				font-weight: bold;
+				margin-left: 4px;
+			}
+			#container {
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			#display {
+			/**margin-bottom:10px; **/
+			}
+			#inputcontainer {
+				width: 95%;
+			}
+			#cursor {
+				display: inline;
+				width: 18px;
+			}
+		</style>
+
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/console.js"></script>
+		<script type="text/javascript" src="js/consolecommands.js"></script>
+		<script type="text/javascript" src="js/jseditor.js"></script>
+		<script type="text/javascript" src="js/jseditorcommands.js"></script>
+		<script type="text/javascript" src="js/display.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(window).resize(function() {
+					resize();
+				});
+				$('*').click(function(e)
+				{
+					$("#inputline").focus();
+				});
+
+				function resize() {
+					cwidth = window.innerWidth-20;
+					cheight = window.innerHeight;
+
+					dheight = cheight - $('#inputline').height() - 10;
+					dwidth = cwidth;
+
+					$('#container').width(cwidth);
+					//$('#container').height(cheight);
+					$('#display').width(dwidth);
+					//$('#display').height(dheight);
+					$('#inputline').width(cwidth - 60);
+				}
+
+
+				function init() {
+					$('#inputline').focus();
+					window.Console = new Console();
+					window.JSEditor = new JSEditor();
+					window.Display = new Display('#inputline', '#display', '#cursor');
+					resize();
+				}
+				
+				init();
+			});
+		</script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="display">
+				------------------Welcome to Alex Aylwin's Console---------------------
+				<br />
+				<br />
+				type 'help' for a list of commands
+				<br />
+				type 'start gui' to be taken to the graphical version of the website
+				<br />
+				to use the JS editor, type 'jseditor' or 'start jseditor'
+				<br />
+				<br />
+			</div>
+			<div id="cursor">
+				&gt;
+			</div>
+			<input type="text" id="inputline"/>
+		</div>
+	</body>
+</html>
