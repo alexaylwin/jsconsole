@@ -1,11 +1,5 @@
-function JSEditorHelpCommand(in_args) {
-	this.args = in_args;
-	this.execute = function() {
-
-	}
-}
-
 function JSEditorStartCommand(in_args) {
+	this.cmd = "start";
 	this.args = in_args;
 	this.execute = function() {
 		JSEditor.set_mode(1);
@@ -13,10 +7,20 @@ function JSEditorStartCommand(in_args) {
 	}
 }
 
+function JSEditorReportCommand()
+{
+	this.cmd = "report";
+	this.execute = function()
+	{
+		length = Harddrive.report();
+		Display.update_display(length);
+	}
+}
+
 //This command is responsible for saving
 //the defined functions into cookies.
 function JSEditorSaveCommand(in_args) {
-
+	this.cmd = "save";
 	this.args = in_args;
 	this.execute = function() {
 		var functionname = this.args[0];
@@ -39,10 +43,8 @@ function JSEditorSaveCommand(in_args) {
 		if (!functionname) {
 			functionname = Math.floor(Math.random() * 1000);
 		}
-		$.cookie(functionname, JSEditor.get_currentfunction(), {
-			expires : 30,
-			domain : ''
-		});
+		
+		Harddrive.write(functionname, JSEditor.get_currentfunction());
 		JSEditor.set_currentfunction('', 1);
 		JSEditor.set_mode(0);
 	}
@@ -54,6 +56,7 @@ function JSEditorSaveCommand(in_args) {
  */
 function JSEditorAppendCommand(in_args) {
 	this.args = in_args;
+	this.cmd = "append";
 	this.execute = function() {
 		var args = this.args;
 		var text = args[args.length - 1];
@@ -65,6 +68,7 @@ function JSEditorAppendCommand(in_args) {
 }
 
 function JSEditorErrorCommand(in_args) {
+	this.cmd = "error";
 	this.execute = function() {
 		Display.update_display('\'' + in_args + '\' is not recognized as a command', 0);
 	}
@@ -72,10 +76,12 @@ function JSEditorErrorCommand(in_args) {
 
 function JSEditorRunUserFunctionCommand(in_args)
 {
+	this.cmd = "run";
 	this.func_name = in_args[0];
 	this.execute = function()
 	{
-		var func = $.cookie(this.func_name);
+		//var func = $.cookie(this.func_name);
+		var func = Harddrive.read(this.func_name);
 		if(!func)
 		{
 			Display.update_display('Error - no user defined function with the name '
@@ -88,6 +94,7 @@ function JSEditorRunUserFunctionCommand(in_args)
 }
 
 function JSEditorListCommand(in_args) {
+	this.cmd = "list";
 	this.args = in_args;
 	this.execute = function() {
 		/*
@@ -117,6 +124,7 @@ function JSEditorListCommand(in_args) {
 
 function JSEditorEraseCommand(in_args) {
 	this.args = in_args;
+	this.cmd = "erase";
 	this.execute = function() {
 		var functionname = this.args[0];
 		/*
@@ -128,12 +136,14 @@ function JSEditorEraseCommand(in_args) {
 }
 
 function JSEditorHelpCommand(in_args) {
+	this.cmd = "help";
 	this.execute = function() {
 		Display.update_display('The JS Editor allows you to write your own applications that will run ' + 'on the console. To start defining a function, type \'begin\' and then your JS code. To end your' + 'function, type \'save [name]\'. This will save the function under the given name. Now the function' + 'will be accessible from the console. To return to the console, type \'exit\'');
 	}
 }
 
 function JSEditorExitCommand(in_args) {
+	this.cmd = "exit";
 	this.execute = function() {
 		JSEditor.set_mode(0);
 		Display.set_mode(0);
@@ -141,19 +151,3 @@ function JSEditorExitCommand(in_args) {
 	}
 }
 
-function add_user_defined_function() {
-	$.cookie('testf', '{alert("test");}');
-
-}
-
-function read_user_defined_function() {
-	var f = $.cookie('testf');
-	eval(f);
-}
-
-function newUserFunctionCommand(in_args) {
-	this.args = in_args;
-	this.execute = function() {
-
-	}
-}

@@ -9,6 +9,10 @@ function JSEditor() {
 	var mode = 0;
 	var currentfunction = "";
 	var currentfunctionname = "";
+	var command_list = this.command_list = [JSEditorHelpCommand, JSEditorStartCommand, 
+	JSEditorSaveCommand, JSEditorAppendCommand, JSEditorRunUserFunctionCommand, 
+	JSEditorListCommand, JSEditorEraseCommand, JSEditorExitCommand, JSEditorReportCommand]
+	var error_handle = JSEditorErrorCommand;
 
 	this.user_input = function() 
 	{
@@ -64,47 +68,36 @@ function JSEditor() {
 
 		//this checks to see if the command entered was actually valid
 		if (mode == 0) {
-			switch(cmd) {
-				case "save":
-					command = new JSEditorSaveCommand(args);
-					break;
-				case "help":
-					command = new JSEditorHelpCommand(args);
-					break;
-				case "exit":
-					command = new JSEditorExitCommand(args);
-					break;
-				case "start":
-					command = new JSEditorStartCommand(args);
-					break;
-				case "list":
-					command = new JSEditorListCommand(args);
-					break;
-				case "erase":
-					command = new JSEditorEraseCommand(args);
-					break;
-				case "run":
-					command = new JSEditorRunUserFunctionCommand(args);
-					break;
-				default:
-					command = new JSEditorErrorCommand(cmd);
+			c = null;
+			for(i = 0; i < command_list.length; i++)
+			{
+				c = new command_list[i](args);
+				if(c.cmd == cmd)
+				{
+					return c;
+				}
 			}
+			c = new error_handle(cmd);
+			return c;
+			
 		} else if (mode == 1) {
 			//only allow the save and exit commands
 			//while editing a JS function
-			switch(cmd) {
-				case "save":
-					command = new JSEditorSaveCommand(args);
-					break;
-				case "exit":
-					command = new JSEditorExitCommand(args);
-					break;
-				default:
-					args[args.length] = cmd;
-					command = new JSEditorAppendCommand(args);
+			temp_list = [JSEditorSaveCommand, JSEditorExitCommand];
+			c = null;
+			for(i = 0; i < command_list.length; i++)
+			{
+				c = new command_list[i](args);
+				if(c.cmd == cmd)
+				{
+					return c;
+				}
 			}
+			args[args.length] = cmd;
+			c = new JSEditorAppendCommand(args);
+			return c;
 		}
-		return command;
+		return new JSEditorErrorCommand("");
 	}
 
 	function run_command(command) {

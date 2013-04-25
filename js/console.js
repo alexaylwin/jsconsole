@@ -3,6 +3,8 @@
  */
 function Console() {
 
+	var command_list = this.command_list = [HelpCommand, ClearCommand, NavigateCommand, ProjectCommand, JSEditorCommand, StartCommand];
+	var error_handle = ErrorCommand;
 	
 	this.user_input = function (user_in)
 	{
@@ -28,52 +30,21 @@ function Console() {
 			args[i - 1] = words[i].toLowerCase();
 		}
 
-		//this checks to see if the command entered was actually valid
-		switch(cmd) {
-			case "help":
-				command = new HelpCommand(args);
-				break;
-			case "clear":
-				command = new ClearCommand(args);
-				break;
-			case "navigate":
-				command = new NavigateCommand(args);
-				break;
-			case "project":
-				command = new ProjectCommand(args);
-				break;
-			case "jseditor":
-				command = new JSEditorCommand(args);
-				break;
-			case "start":
-				command = new StartCommand(args);
-				break;
-			default:
-				command = new ErrorCommand(cmd);
-				break;
+		c = null;
+		for(i = 0; i < command_list.length; i++)
+		{
+			c = new command_list[i](args);
+			if(c.cmd == cmd)
+			{
+				return c;
+			}
 		}
-		return command;
+		c = new error_handle(cmd);
+		return c;
 	}
 
-	/**
-	 * This function is responsible for checking the CLI state to ensure
-	 * that the entered command can be executed. If so, then the execute method
-	 * is called and control is passed to the command until it is done operation.
-	 *
-	 * Some examples of invalid state might be - calling 'projects' while running 'game'
-	 *
-	 * Currently, no state is implemented, so the command is always executed.
-	 */
 	function run_command(command) {
-		/**
-		 * If the mode is zero, we're in the default, we're in the default
-		 * command mode, where the user can browse projects etc. This means we
-		 * only allow the core subset of commands
-		 */
-			//if the command is unknown, then run_command will return
-			//an artibrary command.
 				command.execute();
-
 	}
 
 	/**
